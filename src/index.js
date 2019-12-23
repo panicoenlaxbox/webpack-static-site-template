@@ -7,12 +7,19 @@ document.getElementById("babel").addEventListener("click", () => {
 });
 
 import $ from 'jquery';
-// window.jQuery = $;
-// window.$ = $;
-
 import { selectric } from 'selectric';
 require('selectric/public/selectric.css');
 
 $(function () {    
     $("select").selectric();
 });
+
+import * as lib from './scripts/lib';
+lib.bark();
+lib.meow();
+
+import './scripts/jQuery.bold';
+$(function () {    
+    $("footer").bold();
+});
+
