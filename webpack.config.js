@@ -42,13 +42,20 @@ module.exports = {
                 use: [
                     {
                         loader: 'url-loader',
-                        options: {
+                        options: {     
+                            esModule: false,                       
                             limit: 8192
                         }
                     },
                     'image-webpack-loader'
                 ]
             },
+            {
+                test: /\.(html)$/,
+                use: {
+                    loader: 'html-loader'
+                }
+            },            
         ]
     },
     plugins: [
