@@ -87,6 +87,12 @@ module.exports = (env, argv) => {
                             },
                         }
                     ]
+                },
+                {
+                    test: /\.(woff|woff2|ttf|otf|eot)$/,
+                    use: [
+                        'file-loader'
+                    ]
                 }
             ]
         },
@@ -94,7 +100,7 @@ module.exports = (env, argv) => {
             new HtmlWebpackPlugin({
                 filename: 'index.html',
                 template: 'src/index.html'
-            }),
+            }),          
             new CleanWebpackPlugin(),
             new MiniCssExtractPlugin(),
             new webpack.SourceMapDevToolPlugin(),
