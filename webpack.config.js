@@ -10,6 +10,7 @@ module.exports = (env, argv) => {
     return {
         entry: {
             index: './src/index.js',
+            about: './src/about.js',
             vendor: ['jquery', 'selectric']
         },
         output: {
@@ -99,11 +100,15 @@ module.exports = (env, argv) => {
         plugins: [
             new HtmlWebpackPlugin({
                 filename: 'index.html',
-                template: 'src/index.html'
+                template: 'src/index.html',
+                hash: true,
+                chunks: ['index', 'vendor']
             }),
             new HtmlWebpackPlugin({
                 filename: 'about.html',
-                template: 'src/about.html'
+                template: 'src/about.html',
+                hash: true,
+                chunks: ['about', 'vendor']
             }),            
             new CleanWebpackPlugin(),
             new MiniCssExtractPlugin(),
