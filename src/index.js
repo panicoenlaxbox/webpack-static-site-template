@@ -1,1 +1,3 @@
+require('./styles/styles.scss');
+
 console.log('Hello World!');
