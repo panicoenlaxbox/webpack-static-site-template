@@ -100,7 +100,11 @@ module.exports = (env, argv) => {
             new HtmlWebpackPlugin({
                 filename: 'index.html',
                 template: 'src/index.html'
-            }),          
+            }),
+            new HtmlWebpackPlugin({
+                filename: 'about.html',
+                template: 'src/about.html'
+            }),            
             new CleanWebpackPlugin(),
             new MiniCssExtractPlugin(),
             new webpack.SourceMapDevToolPlugin(),
