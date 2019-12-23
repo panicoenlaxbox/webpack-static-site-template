@@ -5,3 +5,20 @@ $border-dark: rgba($base-color, 0.88);
   border: 1px solid $border-dark;
   background: linear-gradient(to bottom, white, black);
 }
+
+@mixin image {
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 200px;
+  width: 200px;
+}
+
+.drizzt {
+  @include image;
+  background-image: url('../images/Drizzt.png');  
+}
+
+.guenhwyvar {
+  @include image;
+  background-image: url('../images/Guenhwyvar.jpg');
+}
