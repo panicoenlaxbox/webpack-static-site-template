@@ -23,3 +23,4 @@ $(function () {
     $("footer").bold();
 });
 
+console.log(__("message"));
