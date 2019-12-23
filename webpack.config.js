@@ -8,7 +8,10 @@ module.exports = (env, argv) => {
     const isProduction = argv.mode === 'production';
 
     return {
-        entry: './src/index.js',
+        entry: {
+            index: './src/index.js',
+            vendor: ['jquery', 'selectric']
+        },
         output: {
             path: path.resolve(__dirname, 'dist'),
             filename: 'bundle.js'
@@ -72,7 +75,19 @@ module.exports = (env, argv) => {
                             presets: ['@babel/preset-env']
                         }
                     }
-                }                
+                },
+                {
+                    test: /\.(css)$/,
+                    use: [
+                        MiniCssExtractPlugin.loader,
+                        {
+                            loader: 'css-loader',
+                            options: {
+                                sourceMap: true,
+                            },
+                        }
+                    ]
+                }                           
             ]
         },
         plugins: [
@@ -84,6 +99,21 @@ module.exports = (env, argv) => {
             new MiniCssExtractPlugin(),
             new webpack.SourceMapDevToolPlugin()
         ],
-        mode: 'development'
+        mode: 'development',
+        optimization: {
+            splitChunks: {
+                cacheGroups: {
+                    commons: {
+                        test: /[\\/]node_modules[\\/]/,
+                        name: "vendor",
+                        chunks: "all"
+                    }
+                }
+            }
+        },        
+        output: {
+            path: path.resolve(__dirname, 'dist'),
+            filename: `[name].js`
+        },        
     }
 };

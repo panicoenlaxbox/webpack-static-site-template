@@ -31,5 +31,9 @@
     "webpack": "^4.41.4",
     "webpack-cli": "^3.3.10",
     "webpack-dev-server": "^3.10.1"
+  },
+  "dependencies": {
+    "jquery": "^3.4.1",
+    "selectric": "^1.13.0"
   }
 }
