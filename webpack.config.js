@@ -87,7 +87,7 @@ module.exports = (env, argv) => {
                             },
                         }
                     ]
-                }                           
+                }
             ]
         },
         plugins: [
@@ -97,7 +97,11 @@ module.exports = (env, argv) => {
             }),
             new CleanWebpackPlugin(),
             new MiniCssExtractPlugin(),
-            new webpack.SourceMapDevToolPlugin()
+            new webpack.SourceMapDevToolPlugin(),
+            new webpack.ProvidePlugin({
+                $: 'jquery',
+                jQuery: 'jquery',
+            })
         ],
         mode: 'development',
         optimization: {
@@ -110,10 +114,10 @@ module.exports = (env, argv) => {
                     }
                 }
             }
-        },        
+        },
         output: {
             path: path.resolve(__dirname, 'dist'),
             filename: `[name].js`
-        },        
+        },
     }
 };
