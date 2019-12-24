@@ -61,7 +61,7 @@ module.exports = (env, argv) => {
                                 loader: 'url-loader',
                                 options: {
                                     esModule: false,
-                                    limit: 8192
+                                    limit: 0
                                 }
                             },
                             'image-webpack-loader'
