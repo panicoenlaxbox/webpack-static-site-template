@@ -44,8 +44,8 @@ languages.forEach((language: Language) => {
             encoding: "utf8",
             flag: "r"
         });
-        const re = /(<link href|<img src)="(?!http[s]?)/gi;
-        content = content.replace(re, "$1=\"../");
+        const re = /(<link href="|<img src="?)(?!http[s]?)/gi;
+        content = content.replace(re, "$1../");
         console.log(`saving ${file.path}`);
         fs.writeFileSync(file.path, content);
     });
