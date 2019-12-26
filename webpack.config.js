@@ -156,8 +156,7 @@ module.exports = (env, argv) => {
                 }),                
                 new EventHooksPlugin({
                     compile: () => {
-                        command = 'rimraf dist';
-                        exec(command, (err, stdout, stderr) => {
+                        exec('rimraf dist', (err, stdout, stderr) => {
                             if (stdout) process.stdout.write(stdout);
                             if (stderr) process.stderr.write(stderr);
                         });
@@ -165,9 +164,8 @@ module.exports = (env, argv) => {
                 }),
                 new EventHooksPlugin({
                     done: () => {
-                        const command = !translation.default ? `rimraf \"dist/${translation.language}/**/!(*.html|*.js)\"` : '';
-                        if (command) {
-                            exec(command, (err, stdout, stderr) => {
+                        if (!translation.default) {
+                            exec(`rimraf \"dist/${translation.language}/**/!(*.html|*.js)\"`, (err, stdout, stderr) => {
                                 if (stdout) process.stdout.write(stdout);
                                 if (stderr) process.stderr.write(stderr);
                             });
