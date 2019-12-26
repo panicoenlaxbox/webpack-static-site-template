@@ -11,10 +11,16 @@ const translations =
     glob.sync("./src/languages/*.json").map(file => ({
         language: path.basename(file, path.extname(file)),
         translation: require(file),
-    })).map(translation => ({
-        ...translation,
-        default: translation.language.toLowerCase() === 'en'
-    }));
+    })).map(translation => {
+        const isDefault = translation.language === 'en';
+        return {
+            ...translation,
+            default: isDefault,
+            dist: path.resolve(__dirname, 'dist', !isDefault ? translation.language : '')
+        };
+    });
+
+// console.log(translations);
 
 module.exports = (env, argv) => {
     const isProduction = argv.mode === 'production';
@@ -113,19 +119,19 @@ module.exports = (env, argv) => {
                     failOnMissing: true
                 }),
                 new HtmlWebpackPlugin({
-                    filename: path.resolve(path.resolve(__dirname, 'dist', translation.language, 'index.html')),
+                    filename: path.join(translation.dist, 'index.html'),
                     template: 'src/index.html',
                     hash: true,
                     chunks: ['index', 'vendor']
                 }),
                 new HtmlWebpackPlugin({
-                    filename: path.resolve(path.resolve(__dirname, 'dist', translation.language, 'about.html')),
+                    filename: path.join(translation.dist, 'about.html'),
                     template: 'src/about.html',
                     hash: true,
                     chunks: ['about', 'vendor']
                 }),
                 new HtmlStringReplace({
-                    enable: true,
+                    enable: !translation.default,
                     patterns: [
                         {
                             match: /__(.+?)__/g,
@@ -149,7 +155,7 @@ module.exports = (env, argv) => {
                 }),
                 new WebpackShellPlugin({
                     onBuildStart: ['rimraf dist'],
-                    onBuildEnd: ['ts-node moveFiles.ts']
+                    onBuildEnd: [!translation.default ? `rimraf \"dist/${translation.language}/**/!(*.html|*.js)\"`: '']
                 })
             ],
             mode: 'development',
@@ -165,7 +171,7 @@ module.exports = (env, argv) => {
                 }
             },
             output: {
-                path: path.resolve(path.resolve(__dirname, 'dist', translation.language)),
+                path: translation.dist,
                 filename: `[name].${translation.language}.js`
             },
         };
