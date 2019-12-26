@@ -20,8 +20,6 @@ const translations =
         };
     });
 
-// console.log(translations);
-
 module.exports = (env, argv) => {
     const isProduction = argv.mode === 'production';
 
@@ -131,12 +129,16 @@ module.exports = (env, argv) => {
                     chunks: ['about', 'vendor']
                 }),
                 new HtmlStringReplace({
-                    enable: !translation.default,
                     patterns: [
                         {
                             match: /__(.+?)__/g,
                             replacement: (match, $1) => translation.translation[$1]
                         },
+                    ]
+                }),                
+                new HtmlStringReplace({
+                    enable: !translation.default,
+                    patterns: [
                         {
                             match: /(<link href=")(?!(\/\/|https?:\/\/))/gi,
                             replacement: (match, $1) => `${$1}../`
@@ -154,6 +156,7 @@ module.exports = (env, argv) => {
                     jQuery: 'jquery',
                 }),
                 new WebpackShellPlugin({
+                    dev: true, // https://github.com/1337programming/webpack-shell-plugin/blob/master/src/webpack-shell-plugin.js#L83
                     onBuildStart: ['rimraf dist'],
                     onBuildEnd: [!translation.default ? `rimraf \"dist/${translation.language}/**/!(*.html|*.js)\"`: '']
                 })
