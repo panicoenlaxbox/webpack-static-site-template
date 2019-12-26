@@ -22,9 +22,7 @@ const translations =
 
 module.exports = (env, argv) => {
     const isProduction = argv.mode === 'production';
-
     return translations.map((translation) => {
-
         return {
             entry: {
                 index: './src/index.js',
