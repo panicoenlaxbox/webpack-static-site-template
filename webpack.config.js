@@ -4,8 +4,9 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const webpack = require('webpack')
 const glob = require("glob");
 const I18nPlugin = require('i18n-webpack-plugin');
-const WebpackShellPlugin = require('webpack-shell-plugin');
 const HtmlStringReplace = require('html-string-replace-webpack-plugin-webpack-4');
+const EventHooksPlugin = require('event-hooks-webpack-plugin');
+const exec = require('child_process').exec;
 
 const translations =
     glob.sync("./src/languages/*.json").map(file => ({
@@ -110,6 +111,7 @@ module.exports = (env, argv) => {
                     }
                 ]
             },
+            devtool: isProduction ? 'source-map': 'inline-cheap-module-source-map',
             plugins: [
                 new I18nPlugin(translation.translation, {
                     failOnMissing: true
@@ -133,7 +135,7 @@ module.exports = (env, argv) => {
                             replacement: (match, $1) => translation.translation[$1]
                         },
                     ]
-                }),                
+                }),
                 new HtmlStringReplace({
                     enable: !translation.default,
                     patterns: [
@@ -148,16 +150,30 @@ module.exports = (env, argv) => {
                     ]
                 }),
                 new MiniCssExtractPlugin(),
-                new webpack.SourceMapDevToolPlugin(),
                 new webpack.ProvidePlugin({
                     $: 'jquery',
                     jQuery: 'jquery',
+                }),                
+                new EventHooksPlugin({
+                    compile: () => {
+                        command = 'rimraf dist';
+                        exec(command, (err, stdout, stderr) => {
+                            if (stdout) process.stdout.write(stdout);
+                            if (stderr) process.stderr.write(stderr);
+                        });
+                    }
                 }),
-                new WebpackShellPlugin({
-                    dev: true, // https://github.com/1337programming/webpack-shell-plugin/blob/master/src/webpack-shell-plugin.js#L83
-                    onBuildStart: ['rimraf dist'],
-                    onBuildEnd: [!translation.default ? `rimraf \"dist/${translation.language}/**/!(*.html|*.js)\"`: '']
-                })
+                new EventHooksPlugin({
+                    done: () => {
+                        const command = !translation.default ? `rimraf \"dist/${translation.language}/**/!(*.html|*.js)\"` : '';
+                        if (command) {
+                            exec(command, (err, stdout, stderr) => {
+                                if (stdout) process.stdout.write(stdout);
+                                if (stderr) process.stderr.write(stderr);
+                            });
+                        }
+                    }
+                })           
             ],
             mode: 'development',
             optimization: {
