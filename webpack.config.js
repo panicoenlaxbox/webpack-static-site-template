@@ -1,11 +1,11 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const webpack = require('webpack')
 const glob = require("glob");
 const I18nPlugin = require('i18n-webpack-plugin');
-const HtmlWebpackStringReplacePlugin = require('html-webpack-string-replace-plugin');
+const WebpackShellPlugin = require('webpack-shell-plugin');
+const HtmlStringReplace = require('html-string-replace-webpack-plugin-webpack-4');
 
 const translations =
     glob.sync("./src/languages/*.json").map(file => ({
@@ -13,7 +13,7 @@ const translations =
         translation: require(file),
     })).map(translation => ({
         ...translation,
-        default: translation.language === 'en'
+        default: translation.language.toLowerCase() === 'en'
     }));
 
 module.exports = (env, argv) => {
@@ -73,6 +73,7 @@ module.exports = (env, argv) => {
                             loader: 'html-loader',
                             options: {
                                 minimize: isProduction,
+                                removeAttributeQuotes: false,
                                 interpolate: true,
                             }
                         }
@@ -123,22 +124,33 @@ module.exports = (env, argv) => {
                     hash: true,
                     chunks: ['about', 'vendor']
                 }),
-                new HtmlWebpackStringReplacePlugin(
-                    // https://stackoverflow.com/a/32452554
-                    Object.assign(
-                        {},
-                        ...Object.keys(translation.translation).map(key => ({ [`__${key}__`]: translation.translation[key] })),
+                new HtmlStringReplace({
+                    enable: true,
+                    patterns: [
                         {
-                            '__language__': translation.language
+                            match: /__(.+?)__/g,
+                            replacement: (match, $1) => translation.translation[$1]
+                        },
+                        {
+                            match: /(<link href=")(?!(\/\/|https?:\/\/))/gi,
+                            replacement: (match, $1) => `${$1}../`
+                        },
+                        {
+                            match: /(<img src=")(?!(\/\/|https?:\/\/|data:image))/gi,
+                            replacement: (match, $1) => `${$1}../`
                         }
-                    )),
-                new CleanWebpackPlugin(),
+                    ]
+                }),
                 new MiniCssExtractPlugin(),
                 new webpack.SourceMapDevToolPlugin(),
                 new webpack.ProvidePlugin({
                     $: 'jquery',
                     jQuery: 'jquery',
                 }),
+                new WebpackShellPlugin({
+                    onBuildStart: ['rimraf dist'],
+                    onBuildEnd: ['ts-node moveFiles.ts']
+                })
             ],
             mode: 'development',
             optimization: {
