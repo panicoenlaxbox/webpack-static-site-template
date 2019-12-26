@@ -6,7 +6,7 @@
   "scripts": {
     "build": "npm run sass-lint && webpack",
     "build:prod": "npm run sass-lint && webpack --mode production",
-    "start": "webpack-dev-server --open-page \"en/index.html\"",
+    "start": "webpack-dev-server --open",
     "ts-node": "ts-node",
     "tsc": "tsc",
     "dist": "ts-node dist.ts",
