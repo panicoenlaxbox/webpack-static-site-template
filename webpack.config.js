@@ -8,6 +8,11 @@ const HtmlStringReplace = require('html-string-replace-webpack-plugin-webpack-4'
 const EventHooksPlugin = require('event-hooks-webpack-plugin');
 const exec = require('child_process').exec;
 
+exec('rimraf dist', (err, stdout, stderr) => {
+    process.stdout.write(stdout);
+    process.stderr.write(stderr);
+});
+
 const translations =
     glob.sync("./src/languages/*.json").map(file => ({
         language: path.basename(file, path.extname(file)),
@@ -111,7 +116,7 @@ module.exports = (env, argv) => {
                     }
                 ]
             },
-            devtool: isProduction ? 'source-map': 'inline-cheap-module-source-map',
+            devtool: isProduction ? 'source-map' : 'inline-cheap-module-source-map',
             plugins: [
                 new I18nPlugin(translation.translation, {
                     failOnMissing: true
@@ -153,14 +158,6 @@ module.exports = (env, argv) => {
                 new webpack.ProvidePlugin({
                     $: 'jquery',
                     jQuery: 'jquery',
-                }),                
-                new EventHooksPlugin({
-                    compile: () => {
-                        exec('rimraf dist', (err, stdout, stderr) => {
-                            if (stdout) process.stdout.write(stdout);
-                            if (stderr) process.stderr.write(stderr);
-                        });
-                    }
                 }),
                 new EventHooksPlugin({
                     done: () => {
@@ -171,7 +168,7 @@ module.exports = (env, argv) => {
                             });
                         }
                     }
-                })           
+                })
             ],
             mode: 'development',
             optimization: {
