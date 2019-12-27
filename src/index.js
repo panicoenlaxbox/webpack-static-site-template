@@ -1,26 +1,26 @@
-require('./styles/styles.scss');
+require("./styles/styles.scss");
 
-console.log('Hello World!');
+console.log("Hello World!");
 
 document.getElementById("babel").addEventListener("click", () => {
-    console.log(['Sergio', 'panicoenlaxbox'].map(n => n.toUpperCase()));
+  console.log(["Sergio", "panicoenlaxbox"].map(n => n.toUpperCase()));
 });
 
-import $ from 'jquery';
-import { selectric } from 'selectric';
-require('selectric/public/selectric.css');
+import $ from "jquery";
+import { selectric } from "selectric";
+require("selectric/public/selectric.css");
 
-$(function () {    
-    $("select").selectric();
+$(function() {
+  $("select").selectric();
 });
 
-import * as lib from './scripts/lib';
+import * as lib from "./scripts/lib";
 lib.bark();
 lib.meow();
 
-import './scripts/jQuery.bold';
-$(function () {    
-    $("footer").bold();
+import "./scripts/jQuery.bold";
+$(function() {
+  $("footer").bold();
 });
 
 console.log(__("message"));

@@ -1,3 +1,3 @@
-import $ from 'jquery';
+import $ from "jquery";
 
-console.log('about');
+console.log("about");

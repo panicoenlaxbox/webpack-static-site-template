@@ -7,7 +7,8 @@
     "build": "npm run stylelint && webpack",
     "build:prod": "npm run stylelint && webpack --mode production",
     "start": "webpack-dev-server --open",
-    "stylelint": "stylelint src/**/*.scss --max-warnings=5"
+    "stylelint": "stylelint src/**/*.scss --max-warnings=5",
+    "prettier": "prettier --write src/**/*.{html,js,scss}"
   },
   "keywords": [],
   "author": "",
