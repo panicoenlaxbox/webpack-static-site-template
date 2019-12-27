@@ -1,15 +1,14 @@
 @font-face {
-  font-family: 'Inria Serif', serif;
-  src:
-    local('Inria Serif'),
-    url('../fonts/InriaSerif-Regular.ttf') format("ttf")
+  font-family: "Inria Serif", serif;
+  src: local("Inria Serif"),
+    url("../fonts/InriaSerif-Regular.ttf") format("ttf");
 }
 
 $base-color: #c6538c;
 $border-dark: rgba($base-color, 0.88);
 
 .alert {
-  background: linear-gradient(to bottom, fff, 000);
+  background: linear-gradient(to bottom, white, 000);
   border: 1px solid $border-dark;
 }
 
@@ -22,10 +21,10 @@ $border-dark: rgba($base-color, 0.88);
 
 .drizzt {
   @include image;
-  background-image: url('../images/Drizzt.png');
+  background-image: url("../images/Drizzt.png");
 }
 
 .guenhwyvar {
   @include image;
-  background-image: url('../images/Guenhwyvar.jpg');
+  background-image: url("../images/Guenhwyvar.jpg");
 }
