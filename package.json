@@ -56,11 +56,11 @@
   },
   "lint-staged": {
     "*.{html,js,json,scss,md}": [
-      "prettier --write",
+      "npm run prettier",
       "git add"
     ],
     "*.scss": [
-      "stylelint --fix",
+      "npm run stylelint -- --fix",
       "git add"
     ]
   }
