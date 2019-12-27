@@ -8,7 +8,7 @@ $base-color: #c6538c;
 $border-dark: rgba($base-color, 0.88);
 
 .alert {
-  background: linear-gradient(to bottom, white, 000);
+  background: linear-gradient(to bottom, white, black);
   border: 1px solid $border-dark;
 }
 
