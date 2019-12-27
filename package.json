@@ -48,20 +48,5 @@
   "dependencies": {
     "jquery": "^3.4.1",
     "selectric": "^1.13.0"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
-  "lint-staged": {
-    "*.{html,js,json,scss,md}": [
-      "prettier --write",
-      "git add"
-    ],
-    "*.scss": [
-      "stylelint --max-warnings=5 --fix",
-      "git add"
-    ]
   }
 }

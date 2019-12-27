@@ -1,0 +1,4 @@
+{
+  "*.{html,js,json,scss,md}": ["prettier --write", "git add"],
+  "*.scss": ["stylelint --max-warnings=5 --fix", "git add"]
+}
