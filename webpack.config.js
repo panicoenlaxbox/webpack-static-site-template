@@ -8,10 +8,14 @@ const HtmlStringReplace = require('html-string-replace-webpack-plugin-webpack-4'
 const EventHooksPlugin = require('event-hooks-webpack-plugin');
 const exec = require('child_process').exec;
 
-exec('rimraf dist', (err, stdout, stderr) => {
-    process.stdout.write(stdout);
-    process.stderr.write(stderr);
-});
+function execute(command) {
+    exec(command, (err, stdout, stderr) => {
+        process.stdout.write(stdout);
+        process.stderr.write(stderr);
+    });
+}
+
+execute('rimraf dist');
 
 const translations =
     glob.sync("./src/languages/*.json").map(file => ({
@@ -162,10 +166,7 @@ module.exports = (env, argv) => {
                 new EventHooksPlugin({
                     done: () => {
                         if (!translation.default) {
-                            exec(`rimraf \"dist/${translation.language}/**/!(*.html|*.js)\"`, (err, stdout, stderr) => {
-                                if (stdout) process.stdout.write(stdout);
-                                if (stderr) process.stderr.write(stderr);
-                            });
+                            execute(`rimraf \"dist/${translation.language}/**/!(*.html|*.js)\"`);
                         }
                     }
                 })
