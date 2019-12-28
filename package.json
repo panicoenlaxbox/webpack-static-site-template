@@ -8,6 +8,7 @@
     "build:prod": "npm run stylelint && npm run prettier && webpack --mode production",
     "start": "webpack-dev-server --open",
     "stylelint": "stylelint **/*.scss --formatter verbose --max-warnings=5",
+    "stylelint:fix": "stylelint **/*.scss --formatter verbose --fix",
     "prettier": "prettier --write **/*.{html,js,json,scss,md}"
   },
   "keywords": [],
