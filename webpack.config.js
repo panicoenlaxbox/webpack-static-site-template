@@ -131,13 +131,11 @@ module.exports = (env, argv) => {
         new HtmlWebpackPlugin({
           filename: path.join(translation.dist, "index.html"),
           template: "src/index.html",
-          hash: true,
           chunks: ["index", "vendor"]
         }),
         new HtmlWebpackPlugin({
           filename: path.join(translation.dist, "about.html"),
           template: "src/about.html",
-          hash: true,
           chunks: ["about", "vendor"]
         }),
         new HtmlStringReplace({
@@ -161,7 +159,9 @@ module.exports = (env, argv) => {
             }
           ]
         }),
-        new MiniCssExtractPlugin(),
+        new MiniCssExtractPlugin({
+          filename: "[name].[hash].css"
+        }),
         new webpack.ProvidePlugin({
           $: "jquery",
           jQuery: "jquery"
@@ -190,7 +190,7 @@ module.exports = (env, argv) => {
       },
       output: {
         path: translation.dist,
-        filename: `[name].${translation.language}.js`
+        filename: `[name].${translation.language}.[hash].js`
       }
     };
   });
