@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "npm run stylelint && npm run prettier && webpack",
-    "build:prod": "npm run stylelint && npm run prettier && webpack --mode production",
+    "build": "npm run stylelint && npm run prettier && webpack --mode=development",
+    "build:prod": "npm run stylelint && npm run prettier && webpack -p --mode=production",
     "start": "webpack-dev-server --open",
     "stylelint": "stylelint **/*.scss --formatter verbose --max-warnings=5",
     "stylelint:fix": "stylelint **/*.scss --formatter verbose --fix",

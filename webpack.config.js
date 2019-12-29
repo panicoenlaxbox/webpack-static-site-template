@@ -37,13 +37,16 @@ const translations = glob
   });
 
 module.exports = (env, argv) => {
+  // console.log(env); // --env.foo=bar --env.baz=qux
+  console.log(argv.mode); // https://webpack.js.org/guides/production/#specify-the-mode
+  // console.log(process.env.NODE_ENV); // https://webpack.js.org/guides/production/#specify-the-mode
+
   const isProduction = argv.mode === "production";
   return translations.map(translation => {
     return {
       entry: {
         index: "./src/index.js",
-        about: "./src/about.js",
-        vendor: ["jquery", "selectric"]
+        about: "./src/about.js"
       },
       module: {
         rules: [
@@ -176,7 +179,7 @@ module.exports = (env, argv) => {
           }
         })
       ],
-      mode: "development",
+      // https://webpack.js.org/plugins/split-chunks-plugin/#split-chunks-example-2
       optimization: {
         splitChunks: {
           cacheGroups: {
@@ -190,8 +193,14 @@ module.exports = (env, argv) => {
       },
       output: {
         path: translation.dist,
+        // filename: (chunkData) => {
+        //   // https://github.com/webpack/webpack/issues/9007
+        //   return `[name].${translation.language}.[hash].js`;
+        // },
         filename: `[name].${translation.language}.[hash].js`
       }
     };
   });
 };
+// https://medium.com/hackernoon/the-100-correct-way-to-split-your-chunks-with-webpack-f8a9df5b7758
+// https://webpack.js.org/plugins/split-chunks-plugin/#split-chunks-example-2
