@@ -157,8 +157,8 @@ module.exports = (env, argv) => {
         new EventHooksPlugin({
           done: () => {
             if (!translation.default) {
-              exec(`rimraf \"dist/${translation.language}/**/!(*.html|*.js)\"`);
-              exec(`rimraf \"dist/${translation.language}/**/vendor*.js"`);
+              exec(`rimraf \"dist/${translation.language}/!(*.html|*.js)\"`);
+              exec(`rimraf \"dist/${translation.language}/vendor*.js"`);
             }
           }
         })
