@@ -4,9 +4,9 @@
   "description": "",
   "private": true,
   "scripts": {
-    "build": "npm run stylelint && npm run prettier && webpack --mode=development",
+    "build": "webpack --mode=development --env.language=en",
     "build:prod": "npm run stylelint && npm run prettier && webpack -p --mode=production",
-    "start": "webpack-dev-server --open",
+    "start": "webpack-dev-server --open --mode=development --env.language=en",
     "stylelint": "stylelint **/*.scss --formatter verbose --max-warnings=5",
     "stylelint:fix": "stylelint **/*.scss --formatter verbose --fix",
     "prettier": "prettier --write **/*.{html,js,json,scss,md}"
