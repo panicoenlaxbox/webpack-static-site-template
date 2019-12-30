@@ -1,6 +1,4 @@
-require("./styles/styles.scss");
-
-console.log("Hello World!");
+console.log("¡Hello World!");
 
 document.getElementById("babel").addEventListener("click", () => {
   console.log(["Sergio", "panicoenlaxbox"].map(n => n.toUpperCase()));
@@ -8,7 +6,7 @@ document.getElementById("babel").addEventListener("click", () => {
 
 import $ from "jquery";
 import { selectric } from "selectric";
-require("selectric/public/selectric.css");
+// require("selectric/public/selectric.css");
 
 $(function() {
   $("select").selectric();
