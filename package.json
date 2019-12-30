@@ -2,7 +2,7 @@
   "name": "static-site-template",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "private": true,
   "scripts": {
     "build": "npm run stylelint && npm run prettier && webpack --mode=development",
     "build:prod": "npm run stylelint && npm run prettier && webpack -p --mode=production",

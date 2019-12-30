@@ -2,51 +2,24 @@ const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const webpack = require("webpack");
-const glob = require("glob");
 const I18nPlugin = require("i18n-webpack-plugin");
 const HtmlStringReplace = require("html-string-replace-webpack-plugin-webpack-4");
 const EventHooksPlugin = require("event-hooks-webpack-plugin");
-const exec = require("child_process").exec;
+const { exec, translations } = require("./config");
 
-function execute(command) {
-  exec(command, (err, stdout, stderr) => {
-    process.stdout.write(stdout);
-    process.stderr.write(stderr);
-  });
-}
-
-execute("rimraf dist");
-
-const translations = glob
-  .sync("./src/languages/*.json")
-  .map(file => ({
-    language: path.basename(file, path.extname(file)),
-    translation: require(file)
-  }))
-  .map(translation => {
-    const isDefault = translation.language === "en";
-    return {
-      ...translation,
-      default: isDefault,
-      dist: path.resolve(
-        __dirname,
-        "dist",
-        !isDefault ? translation.language : ""
-      )
-    };
-  });
+exec("rimraf dist");
 
 module.exports = (env, argv) => {
-  // console.log(env); // --env.foo=bar --env.baz=qux
-  console.log(argv.mode); // https://webpack.js.org/guides/production/#specify-the-mode
-  // console.log(process.env.NODE_ENV); // https://webpack.js.org/guides/production/#specify-the-mode
-
   const isProduction = argv.mode === "production";
   return translations.map(translation => {
     return {
       entry: {
-        index: "./src/index.js",
-        about: "./src/about.js"
+        index: [
+          "./src/index.js",
+          "./src/styles/index.scss",
+          "selectric/public/selectric.css"
+        ],
+        about: ["./src/about.js", "./src/styles/about.scss"]
       },
       module: {
         rules: [
@@ -159,11 +132,15 @@ module.exports = (env, argv) => {
             {
               match: /(<img src=")(?!(\/\/|https?:\/\/|data:image))/gi,
               replacement: (match, $1) => `${$1}../`
+            },
+            {
+              match: /(<script type="text\/javascript" src=")(?=vendor\.)/gi,
+              replacement: (match, $1) => `${$1}../`
             }
           ]
         }),
         new MiniCssExtractPlugin({
-          filename: "[name].[hash].css"
+          filename: `[name]${isProduction ? ".[contenthash]" : ""}.css`
         }),
         new webpack.ProvidePlugin({
           $: "jquery",
@@ -172,35 +149,30 @@ module.exports = (env, argv) => {
         new EventHooksPlugin({
           done: () => {
             if (!translation.default) {
-              execute(
-                `rimraf \"dist/${translation.language}/**/!(*.html|*.js)\"`
-              );
+              exec(`rimraf \"dist/${translation.language}/**/!(*.html|*.js)\"`);
+              exec(`rimraf \"dist/${translation.language}/**/vendor*.js"`);
             }
           }
         })
       ],
-      // https://webpack.js.org/plugins/split-chunks-plugin/#split-chunks-example-2
       optimization: {
         splitChunks: {
           cacheGroups: {
             commons: {
               test: /[\\/]node_modules[\\/]/,
               name: "vendor",
-              chunks: "all"
+              chunks: "all",
+              filename: `[name]${isProduction ? ".[contenthash]" : ""}.js`
             }
           }
         }
       },
       output: {
         path: translation.dist,
-        // filename: (chunkData) => {
-        //   // https://github.com/webpack/webpack/issues/9007
-        //   return `[name].${translation.language}.[hash].js`;
-        // },
-        filename: `[name].${translation.language}.[hash].js`
+        filename: `[name].${translation.language}${
+          isProduction ? ".[contenthash]" : ""
+        }.js`
       }
     };
   });
 };
-// https://medium.com/hackernoon/the-100-correct-way-to-split-your-chunks-with-webpack-f8a9df5b7758
-// https://webpack.js.org/plugins/split-chunks-plugin/#split-chunks-example-2
