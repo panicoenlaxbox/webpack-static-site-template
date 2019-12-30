@@ -2,12 +2,14 @@ const path = require("path");
 const glob = require("glob");
 const exec = require("child_process").exec;
 
-module.exports.exec = command => {
+function execute(command) {
   exec(command, (err, stdout, stderr) => {
     process.stdout.write(stdout);
     process.stderr.write(stderr);
   });
-};
+}
+
+module.exports.exec = execute;
 
 module.exports.translations = glob
   .sync("./src/languages/*.json")
@@ -27,3 +29,9 @@ module.exports.translations = glob
       )
     };
   });
+
+module.exports.rimraf = (path, patterns) => {
+  patterns.forEach(pattern => {
+    execute(`rimraf \"${path}/${pattern}\"`);
+  });
+};

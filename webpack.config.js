@@ -5,7 +5,7 @@ const webpack = require("webpack");
 const I18nPlugin = require("i18n-webpack-plugin");
 const HtmlStringReplace = require("html-string-replace-webpack-plugin-webpack-4");
 const EventHooksPlugin = require("event-hooks-webpack-plugin");
-const { exec, translations } = require("./config");
+const { exec, translations, rimraf } = require("./config");
 
 exec("rimraf dist");
 
@@ -169,11 +169,12 @@ module.exports = (env, argv) => {
         new EventHooksPlugin({
           done: () => {
             if (!translation.default) {
-              // TODO Delete .map files but not subdirectories
-              exec(
-                `rimraf \"dist/${translation.language}/!(*.html|*.js|mkt)\"`
-              );
-              exec(`rimraf \"dist/${translation.language}/vendor*.js"`);
+              rimraf(`dist/${translation.language}`, [
+                "+(*.css|*.css.map)",
+                "+(*.png|*.jpg|*.jpeg|*.gif|*.svg)",
+                "+(*.woff|*.woff2|*.ttf|*.otf|*.eot)",
+                "+(vendor*.js|vendor*.js.map)"
+              ]);
             }
           }
         })
