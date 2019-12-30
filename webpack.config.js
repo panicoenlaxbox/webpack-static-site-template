@@ -27,6 +27,11 @@ module.exports = (env, argv) => {
           "./src/about.js",
           "./src/styles/styles.scss",
           "./src/styles/about.scss"
+        ],
+        ia: [
+          "./src/mkt/ia/index.js",
+          "./src/styles/styles.scss",
+          "./src/styles/mkt/ia/index.scss"
         ]
       },
       module: {
@@ -122,11 +127,20 @@ module.exports = (env, argv) => {
           template: "src/about.html",
           chunks: ["about", "vendor", "style"]
         }),
+        new HtmlWebpackPlugin({
+          filename: path.join(translation.dist, "mkt/ia/index.html"),
+          template: "src/mkt/ia/index.html",
+          chunks: ["ia", "vendor", "style"]
+        }),
         new HtmlStringReplace({
           patterns: [
             {
               match: /__(.+?)__/g,
               replacement: (match, $1) => translation.translation[$1]
+            },
+            {
+              match: /(<img src=")(?!(\/\/|https?:\/\/|data:image))/gi,
+              replacement: (match, $1) => `${$1}/`
             }
           ]
         }),
@@ -138,12 +152,10 @@ module.exports = (env, argv) => {
               replacement: (match, $1) => `${$1}../`
             },
             {
-              match: /(<img src=")(?!(\/\/|https?:\/\/|data:image))/gi,
-              replacement: (match, $1) => `${$1}../`
-            },
-            {
-              match: /(<script type="text\/javascript" src=")(?=vendor\.)/gi,
-              replacement: (match, $1) => `${$1}../`
+              match: /(<script type="text\/javascript" src=".*?)(?=vendor\.)/gi,
+              replacement: (match, $1) => {
+                return $1.substring(0, $1.lastIndexOf('"') + 1) + "/";
+              }
             }
           ]
         }),
@@ -157,7 +169,10 @@ module.exports = (env, argv) => {
         new EventHooksPlugin({
           done: () => {
             if (!translation.default) {
-              exec(`rimraf \"dist/${translation.language}/!(*.html|*.js)\"`);
+              // TODO Delete .map files but not subdirectories
+              exec(
+                `rimraf \"dist/${translation.language}/!(*.html|*.js|mkt)\"`
+              );
               exec(`rimraf \"dist/${translation.language}/vendor*.js"`);
             }
           }
