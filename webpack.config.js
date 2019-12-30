@@ -11,15 +11,23 @@ exec("rimraf dist");
 
 module.exports = (env, argv) => {
   const isProduction = argv.mode === "production";
-  return translations.map(translation => {
+  return (env && env.language
+    ? translations.filter(value => value.language === env.language)
+    : translations
+  ).map(translation => {
     return {
       entry: {
         index: [
           "./src/index.js",
-          "./src/styles/index.scss",
-          "selectric/public/selectric.css"
+          "selectric/public/selectric.css",
+          "./src/styles/styles.scss",
+          "./src/styles/index.scss"
         ],
-        about: ["./src/about.js", "./src/styles/about.scss"]
+        about: [
+          "./src/about.js",
+          "./src/styles/styles.scss",
+          "./src/styles/about.scss"
+        ]
       },
       module: {
         rules: [
@@ -107,12 +115,12 @@ module.exports = (env, argv) => {
         new HtmlWebpackPlugin({
           filename: path.join(translation.dist, "index.html"),
           template: "src/index.html",
-          chunks: ["index", "vendor"]
+          chunks: ["index", "vendor", "style"]
         }),
         new HtmlWebpackPlugin({
           filename: path.join(translation.dist, "about.html"),
           template: "src/about.html",
-          chunks: ["about", "vendor"]
+          chunks: ["about", "vendor", "style"]
         }),
         new HtmlStringReplace({
           patterns: [
@@ -158,11 +166,18 @@ module.exports = (env, argv) => {
       optimization: {
         splitChunks: {
           cacheGroups: {
-            commons: {
+            vendor: {
               test: /[\\/]node_modules[\\/]/,
               name: "vendor",
               chunks: "all",
               filename: `[name]${isProduction ? ".[contenthash]" : ""}.js`
+            },
+            style: {
+              test: /[\\/]src[\\/]styles[\\/]styles.scss/,
+              name: "style",
+              chunks: "all",
+              filename: `[name]${isProduction ? ".[contenthash]" : ""}.js`,
+              minSize: 0
             }
           }
         }
