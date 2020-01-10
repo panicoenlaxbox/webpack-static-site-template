@@ -1,37 +1,39 @@
 const path = require("path");
-const glob = require("glob");
-const exec = require("child_process").exec;
+const HtmlWebpackPlugin = require("html-webpack-plugin");
 
-function execute(command) {
-  exec(command, (err, stdout, stderr) => {
-    process.stdout.write(stdout);
-    process.stderr.write(stderr);
-  });
-}
-
-module.exports.exec = execute;
-
-module.exports.translations = glob
-  .sync("./src/languages/*.json")
-  .map(file => ({
-    language: path.basename(file, path.extname(file)),
-    translation: require(file)
-  }))
-  .map(translation => {
-    const isDefault = translation.language === "en";
-    return {
-      ...translation,
-      default: isDefault,
-      dist: path.resolve(
-        __dirname,
-        "dist",
-        !isDefault ? translation.language : ""
-      )
-    };
-  });
-
-module.exports.rimraf = (path, patterns) => {
-  patterns.forEach(pattern => {
-    execute(`rimraf \"${path}/${pattern}\"`);
-  });
+module.exports.entry = {
+  index: [
+    "./src/index.js",
+    "selectric/public/selectric.css",
+    "./src/styles/styles.scss",
+    "./src/styles/index.scss"
+  ],
+  about: [
+    "./src/about.js",
+    "./src/styles/styles.scss",
+    "./src/styles/about.scss"
+  ],
+  ia: [
+    "./src/mkt/ia/ia.js",
+    "./src/styles/styles.scss",
+    "./src/styles/mkt/ia/index.scss"
+  ]
 };
+
+module.exports.plugins = dist => [
+  new HtmlWebpackPlugin({
+    filename: path.join(dist, "index.html"),
+    template: "src/index.html",
+    chunks: ["index", "vendor", "style"]
+  }),
+  new HtmlWebpackPlugin({
+    filename: path.join(dist, "about.html"),
+    template: "src/about.html",
+    chunks: ["about", "vendor", "style"]
+  }),
+  new HtmlWebpackPlugin({
+    filename: path.join(dist, "mkt/ia/index.html"),
+    template: "src/mkt/ia/index.html",
+    chunks: ["ia", "vendor", "style"]
+  })
+];
