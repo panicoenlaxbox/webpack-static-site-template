@@ -11,10 +11,11 @@ exec("rimraf dist");
 
 module.exports = (env, argv) => {
   const isProduction = argv.mode === "production";
-  return (env && env.language
-    ? translations.filter(value => value.language === env.language)
-    : translations
-  ).map(translation => {
+  const activeTranslations =
+    env && env.language
+      ? translations.filter(value => value.language === env.language)
+      : translations;
+  return activeTranslations.map(translation => {
     return {
       entry: {
         index: [
@@ -29,7 +30,7 @@ module.exports = (env, argv) => {
           "./src/styles/about.scss"
         ],
         ia: [
-          "./src/mkt/ia/index.js",
+          "./src/mkt/ia/ia.js",
           "./src/styles/styles.scss",
           "./src/styles/mkt/ia/index.scss"
         ]
@@ -113,6 +114,9 @@ module.exports = (env, argv) => {
         ]
       },
       devtool: isProduction ? "source-map" : "inline-cheap-module-source-map",
+      // devServer: {
+      //   historyApiFallback: true
+      // },
       plugins: [
         new I18nPlugin(translation.translation, {
           failOnMissing: true
@@ -140,7 +144,13 @@ module.exports = (env, argv) => {
             },
             {
               match: /(<img src=")(?!(\/\/|https?:\/\/|data:image))/gi,
-              replacement: (match, $1) => `${$1}/`
+              replacement: (match, $1) => {
+                const substitution = `${$1}/`;
+                console.log(
+                  `[${translation.language}] changing from ${$1} to ${substitution}`
+                );
+                return substitution;
+              }
             }
           ]
         }),
@@ -149,12 +159,23 @@ module.exports = (env, argv) => {
           patterns: [
             {
               match: /(<link href=")(?!(\/\/|https?:\/\/))/gi,
-              replacement: (match, $1) => `${$1}../`
+              replacement: (match, $1) => {
+                const substitution = `${$1}../`;
+                console.log(
+                  `[${translation.language}] changing from ${$1} to ${substitution}`
+                );
+                return substitution;
+              }
             },
             {
               match: /(<script type="text\/javascript" src=".*?)(?=vendor\.)/gi,
               replacement: (match, $1) => {
-                return $1.substring(0, $1.lastIndexOf('"') + 1) + "/";
+                const substitution =
+                  $1.substring(0, $1.lastIndexOf('"') + 1) + "/";
+                console.log(
+                  `[${translation.language}] changing from ${$1} to ${substitution}`
+                );
+                return substitution;
               }
             }
           ]
