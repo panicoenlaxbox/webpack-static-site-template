@@ -1,11 +1,10 @@
-const path = require("path");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const webpack = require("webpack");
 const I18nPlugin = require("i18n-webpack-plugin");
 const HtmlStringReplace = require("html-string-replace-webpack-plugin-webpack-4");
 const EventHooksPlugin = require("event-hooks-webpack-plugin");
-const { exec, translations, rimraf } = require("./config");
+const { exec, translations, rimraf } = require("./utilities");
+const { entry, plugins } = require("./config");
 
 exec("rimraf dist");
 
@@ -17,24 +16,7 @@ module.exports = (env, argv) => {
       : translations;
   return activeTranslations.map(translation => {
     return {
-      entry: {
-        index: [
-          "./src/index.js",
-          "selectric/public/selectric.css",
-          "./src/styles/styles.scss",
-          "./src/styles/index.scss"
-        ],
-        about: [
-          "./src/about.js",
-          "./src/styles/styles.scss",
-          "./src/styles/about.scss"
-        ],
-        ia: [
-          "./src/mkt/ia/ia.js",
-          "./src/styles/styles.scss",
-          "./src/styles/mkt/ia/index.scss"
-        ]
-      },
+      entry: entry,
       module: {
         rules: [
           {
@@ -114,28 +96,11 @@ module.exports = (env, argv) => {
         ]
       },
       devtool: isProduction ? "source-map" : "inline-cheap-module-source-map",
-      // devServer: {
-      //   historyApiFallback: true
-      // },
       plugins: [
         new I18nPlugin(translation.translation, {
           failOnMissing: true
         }),
-        new HtmlWebpackPlugin({
-          filename: path.join(translation.dist, "index.html"),
-          template: "src/index.html",
-          chunks: ["index", "vendor", "style"]
-        }),
-        new HtmlWebpackPlugin({
-          filename: path.join(translation.dist, "about.html"),
-          template: "src/about.html",
-          chunks: ["about", "vendor", "style"]
-        }),
-        new HtmlWebpackPlugin({
-          filename: path.join(translation.dist, "mkt/ia/index.html"),
-          template: "src/mkt/ia/index.html",
-          chunks: ["ia", "vendor", "style"]
-        }),
+        ...plugins(translation.dist),
         new HtmlStringReplace({
           patterns: [
             {
