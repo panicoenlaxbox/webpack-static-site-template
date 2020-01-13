@@ -1,4 +1,6 @@
-console.log("¡Hello World!");
+require("./styles/styles.scss");
+require("./styles/index.scss");
+require("selectric/public/selectric.css");
 
 document.getElementById("babel").addEventListener("click", () => {
   console.log(["Sergio", "panicoenlaxbox"].map(n => n.toUpperCase()));
@@ -6,7 +8,6 @@ document.getElementById("babel").addEventListener("click", () => {
 
 import $ from "jquery";
 import { selectric } from "selectric";
-// require("selectric/public/selectric.css");
 
 $(function() {
   $("select").selectric();
