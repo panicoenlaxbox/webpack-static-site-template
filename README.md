@@ -3,3 +3,7 @@
 ```bash
 sudo npm install --unsafe-perm=true --allow-root
 ```
+
+```js
+"build": "webpack --mode=development --env.language=en"
+```
