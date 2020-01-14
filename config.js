@@ -2,7 +2,7 @@ const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports.entry = {
-  index: ["./src/index.js"],
+  index: "./src/index.js",
   about: "./src/about/about.js"
 };
 
@@ -15,6 +15,6 @@ module.exports.plugins = dist => [
   new HtmlWebpackPlugin({
     filename: path.join(dist, "about/about.html"),
     template: "src/about/about.html",
-    chunks: ["about", "vendor", "style"]
+    chunks: ["about", "style"]
   })
 ];
